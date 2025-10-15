@@ -1,0 +1,78 @@
+services:
+  app:
+    build:
+      context: ./docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        ENABLE_XDEBUG: ${ENABLE_XDEBUG:-0}
+        SYSTEM_USER: ${SYSTEM_USER:-app}
+        SYSTEM_UID: ${SYSTEM_UID:-1000}
+        SYSTEM_GID: ${SYSTEM_GID:-1000}
+    container_name: app-${APP_SERVICE_NAME}
+    working_dir: /var/www/html
+    volumes:
+      - ${APPLICATION}:/var/www/html
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx-${APP_SERVICE_NAME}
+    ports:
+      - "8080:80"
+    volumes:
+      - ${APPLICATION}:/var/www/html:ro
+    depends_on:
+      - app
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-${APP_SERVICE_NAME}
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres-${APP_SERVICE_NAME}
+    environment:
+      POSTGRES_DB: db-${APP_SERVICE_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: America/Sao_Paulo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    name: network-${APP_SERVICE_NAME}
+    driver: bridge
