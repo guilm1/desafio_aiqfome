@@ -5,16 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Domain\Cliente\UseCases\CreateCliente;
 use App\Domain\Cliente\UseCases\UpdateCliente;
-use App\Domain\Cliente\UseCases\ChangeClienteEmail;
 use App\Domain\Cliente\UseCases\ListAllCliente;
 use App\Domain\Cliente\UseCases\FindByUuidCliente;
 use App\Domain\Cliente\UseCases\RemoveCliente;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Domain\Cliente\UseCases\UpdateClienteAvatar;
 use App\Http\Requests\Cliente\CreateClienteRequest;
 use App\Http\Requests\Cliente\UpdateClienteRequest;
-use App\Http\Requests\Cliente\ChangeEmailRequest;
-use App\Http\Requests\Cliente\UpdateAvatarRequest;
 
 class ClienteController extends Controller
 {
