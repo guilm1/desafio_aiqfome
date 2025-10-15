@@ -31,12 +31,16 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ]; then \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# ---- Usuário não-root
-ARG SYSTEM_USER=app
-ARG SYSTEM_UID=1000
-ARG SYSTEM_GID=1000
+ARG SYSTEM_USER=${SYSTEM_USER}
+ARG SYSTEM_UID=${SYSTEM_UID}
+ARG SYSTEM_GID=${SYSTEM_GID}
+
 RUN addgroup -g ${SYSTEM_GID} -S ${SYSTEM_USER} \
-    && adduser -S -D -H -u ${SYSTEM_UID} -G ${SYSTEM_USER} ${SYSTEM_USER}
+    && adduser  -S -D -h /home/${SYSTEM_USER} -u ${SYSTEM_UID} -G ${SYSTEM_USER} ${SYSTEM_USER} \
+    && mkdir -p /home/${SYSTEM_USER}/.config/psysh \
+    && chown -R ${SYSTEM_USER}:${SYSTEM_USER} /home/${SYSTEM_USER}
+
+ENV HOME=/home/${SYSTEM_USER}
 
 WORKDIR /var/www/html
 USER ${SYSTEM_USER}
