@@ -18,7 +18,12 @@ class ValidateApiKeyMiddleware
         $apiKey = $request->header('X-API-KEY');
 
         if (!$apiKey || $apiKey !== config('app.api_key_secret')) {
-            return response()->json(['message' => 'API Key inválida ou ausente.'], 401);
+            $code = config('httpstatus.client_error.unauthorized');
+            return response()->json([
+                'code' => $code,
+                'success' => false,
+                'message' => 'API Key inválida ou ausente.'
+            ], $code);
         }
 
         return $next($request);

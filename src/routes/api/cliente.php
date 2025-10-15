@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClienteController;
 
 Route::prefix('cliente')
-    ->middleware(['validate.api.key' /*, 'auth:sanctum', 'policy.access'*/])
+    ->middleware(['validate.api.key', 'auth:sanctum',/* 'policy.access'*/])
     ->group(function () {
         Route::get('/list-all', [ClienteController::class, 'listAll'])
             ->name('list-all');
