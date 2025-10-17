@@ -33,6 +33,9 @@ bash:
 tinker:
 	$(DOCKER) exec -it $(APP_DESAFIO_AIQFOME) php artisan tinker
 
+test:
+	$(DOCKER) exec -it $(APP_DESAFIO_AIQFOME) php artisan test
+
 help:
 	@echo "Comandos Facilitadores desafio aiqfome:"
 	@echo "  up      		- Inicia os containers em modo detached"
@@ -43,6 +46,7 @@ help:
 	@echo "  migrate 		- Executa migrations pendentes"
 	@echo "  migrate-status 	- Mostra o status das migrations"
 	@echo "  seed   		- Executa os seeders do banco de dados"
+	@echo "  test   		- Executa os testes especificados"
 	@echo "  tinker 		- Abre o tinker no container app"
 	@echo "  bash   		- Abre o bash no container app"
 	@echo "  help   		- Mostra os comandos configurados para o Makefile"

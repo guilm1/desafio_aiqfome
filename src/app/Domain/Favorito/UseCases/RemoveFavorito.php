@@ -15,7 +15,8 @@ class RemoveFavorito
         $handler = app(ResolveClienteHandler::class);
         $handler->setNext(app(ConsultaApiExternaExistenciaProdutoHandler::class))
             ->setNext(app(VerificaExistenciaProdutoFavorito::class))
-            ->setNext(app(RemoveProdutoFavoritoClienteHandler::class));
+            ->setNext(app(RemoveProdutoFavoritoClienteHandler::class))
+        ;
 
         $handler->handle($contexto);
         return $contexto;

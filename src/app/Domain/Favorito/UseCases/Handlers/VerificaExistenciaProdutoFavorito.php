@@ -5,6 +5,7 @@ namespace App\Domain\Favorito\UseCases\Handlers;
 use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use App\Domain\Favorito\UseCases\Handlers\BaseHandler;
 use App\Repositories\FavoritoRepository;
+use App\Domain\Favorito\Exceptions\ProdutoNaoExisteCartelaClienteException;
 
 class VerificaExistenciaProdutoFavorito extends BaseHandler
 {
@@ -18,7 +19,7 @@ class VerificaExistenciaProdutoFavorito extends BaseHandler
             $contexto->produtoExisteListaCliente = true;
             $contexto->produtoFavorito = $exists;
         } else {
-            throw new \Exception('Produto não está listado entre os favoritos do cliente.');
+            throw new ProdutoNaoExisteCartelaClienteException('Produto não está listado entre os favoritos do cliente.');
         }
     }
 }

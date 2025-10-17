@@ -9,7 +9,8 @@ use App\Domain\Favorito\UseCases\RemoveFavorito;
 use App\Domain\Favorito\UseCases\FindFavoritosByUuidCliente;
 use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use App\Domain\Favorito\Exceptions\ProdutoJaAdicionadoException;
+use App\Domain\Favorito\Exceptions\ProdutoNaoExisteCartelaClienteException;
 class FavoritoController extends Controller
 {
     private $return;
@@ -42,6 +43,11 @@ class FavoritoController extends Controller
             $this->success = false;
             $this->code = config('httpstatus.client_error.bad_request');
             $this->message = $e->getMessage();
+        } catch (ProdutoJaAdicionadoException $e) {
+            $this->return = null;
+            $this->success = false;
+            $this->code = config('httpstatus.client_error.bad_request');
+            $this->message = $e->getMessage();
         } catch (\Exception $e) {
             $this->return = null;
             $this->success = false;
@@ -59,9 +65,15 @@ class FavoritoController extends Controller
                 uuidCliente: $uuidCliente,
                 produtoId: $produtoId
             );
-            $this->return = $del($contexto);
-            return collection($this->return, $this->code, $this->message, $this->success);
+            $this->return = !! $del($contexto);            
+            $this->message = "Favorito removido com sucesso";
+            $this->code    = config('httpstatus.success.ok');
         } catch (ModelNotFoundException $e) {
+            $this->return = null;
+            $this->success = false;
+            $this->code = config('httpstatus.client_error.bad_request');
+            $this->message = $e->getMessage();
+        } catch (ProdutoNaoExisteCartelaClienteException $e) {
             $this->return = null;
             $this->success = false;
             $this->code = config('httpstatus.client_error.bad_request');

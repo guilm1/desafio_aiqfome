@@ -63,8 +63,16 @@ class ClienteController extends Controller
 
     public function create(CreateClienteRequest $request, CreateCliente $create)
     {
-        $this->return = $create($request->validated());
-        $this->message = 'Cliente criado com sucesso';
+        try {
+            $this->return = $create($request->validated());
+            $this->message = 'Cliente criado com sucesso';
+            $this->code = config('httpstatus.success.created');        
+        } catch (\Exception $e) {
+            $this->return = null;
+            $this->success = false;
+            $this->code = config('httpstatus.client_error.unprocessable_entity');
+            $this->message = "Não foi possível processar a instrução fornecida";
+        }        
         return collection($this->return, $this->code, $this->message);
     }
 
@@ -78,7 +86,7 @@ class ClienteController extends Controller
             $this->success = false;
             $this->code = config('httpstatus.client_error.bad_request');
             $this->message = $e->getMessage();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->return = null;
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');

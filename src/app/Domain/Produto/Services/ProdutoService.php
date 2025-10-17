@@ -11,13 +11,16 @@ class ProdutoService implements ProdutoServiceInterface
 
     public function listAll(): ?array
     {
-        $produtos = $this->integration->listAll();
-        return $produtos->data;
+        $retorno = $this->integration->listAll();
+        if (!($retorno->success ?? false)) {
+            return null;
+        }
+        return is_array($retorno->data ?? null) ? $retorno->data : null;
     }
 
     public function getProdutoById(int $id): object
     {
-        $produto = $this->integration->getProdutoById($id);
-        return $produto;
+        $retorno = $this->integration->getProdutoById($id);
+        return $retorno;
     }
 }
