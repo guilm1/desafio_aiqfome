@@ -11,7 +11,8 @@ class GetProdutoById
     public function __invoke(int $id): object
     {
         $produto = $this->service->getProdutoById($id);
-        if (!$produto?->data) {
+        $validaObjetoData = is_object($produto) && property_exists($produto, 'data') && !empty($produto->data);
+        if (!$validaObjetoData) {
             throw new \Exception('Produto não encontrado');
         }
         return (object) $produto->data;

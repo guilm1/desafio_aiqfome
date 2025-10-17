@@ -48,7 +48,7 @@ if (!function_exists('getProduto')) {
     {
         return (object) [
             "uuid_cliente" => $contexto->uuidCliente,
-            "produto_id" => $contexto->produtoId,
+            "produto_id" => $contexto->produtoId ?? $contexto->produto->id,
             "title" => $contexto->produto->title,
             "image" => $contexto->produto->image,
             "price" => $contexto->produto->price,

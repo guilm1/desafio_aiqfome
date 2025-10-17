@@ -4,6 +4,7 @@ namespace App\Domain\Favorito\UseCases\Handlers;
 
 use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use App\Domain\Favorito\UseCases\Handlers\BaseHandler;
+use App\Domain\Favorito\Exceptions\ProdutoJaAdicionadoException;
 use App\Repositories\FavoritoRepository;
 
 class VerificaProdutoDuplicadoHandler extends BaseHandler
@@ -17,7 +18,7 @@ class VerificaProdutoDuplicadoHandler extends BaseHandler
         if ($exists) {
             $contexto->produtoExisteListaCliente = true;
             $contexto->produtoFavorito = $exists;
-            throw new \Exception('Produto já está listado nos favoritos do cliente.');
+            throw new ProdutoJaAdicionadoException('Produto já está listado nos favoritos do cliente.');
         }
     }
 }

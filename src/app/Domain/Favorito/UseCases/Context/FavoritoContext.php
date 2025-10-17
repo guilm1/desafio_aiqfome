@@ -24,8 +24,7 @@ class FavoritoContext
     public bool $produtoExisteValidacaoExterna = false;
     public array $produtosValidados = [];
     public ?Collection $listaFavoritos = null;
-
-    public int $code = 200;
+    
     public bool $success = false;
     public ?string $message = null;
 

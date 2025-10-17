@@ -9,6 +9,6 @@ class PadronizaRetornoContextoHandler extends BaseHandler
 {
     protected function process(FavoritoContext $contexto): void
     {
-        $contexto->retorno = \getProdutoFavorito($contexto);
+        $contexto->retorno = (object) \getProdutoFavorito($contexto);
     }
 }

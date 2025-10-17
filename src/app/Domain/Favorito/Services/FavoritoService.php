@@ -6,7 +6,7 @@ namespace App\Domain\Favorito\Services;
 use App\Domain\Favorito\Services\Contracts\FavoritoServiceInterface;
 use App\Repositories\Interfaces\FavoritoRepositoryInterface;
 use App\Models\ClienteHasProdutosFavoritos;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class FavoritoService implements FavoritoServiceInterface
 {
@@ -22,7 +22,7 @@ class FavoritoService implements FavoritoServiceInterface
         return $this->favoritos->destroy($clienteId, $produtoId);
     }
 
-    public function getAllByIdCliente(int $id): ?array
+    public function getAllByIdCliente(int $id): ?Collection
     {
         return $this->favoritos->getAllByIdCliente($id);
     }

@@ -13,7 +13,7 @@ Route::prefix('cliente')
         Route::post('/create', [ClienteController::class, 'create'])
             ->name('create');
         Route::put('/update/{uuid}', [ClienteController::class, 'update'])
-            ->name('update');
+            ->name('update')->whereUuid('uuid');
         Route::delete('/remove/{uuid}', [ClienteController::class, 'remove'])
             ->name('remove');
     });

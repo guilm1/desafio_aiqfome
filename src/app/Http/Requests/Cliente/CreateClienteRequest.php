@@ -40,6 +40,6 @@ class CreateClienteRequest extends FormRequest
             'success' => false,
             'code'  => config('httpstatus.client_error.unprocessable_entity'),
             'errors'  => $validator->errors(),
-        ], config('httpsstatus.client_error.unprocessable_entity')));
+        ], config('httpstatus.client_error.unprocessable_entity')));
     }
 }
