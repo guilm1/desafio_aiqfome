@@ -56,7 +56,7 @@ class ClienteController extends Controller
             $this->return = null;
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');
-            $this->message = "Não foi possível processa a instrução fornecida";
+            $this->message = "Não foi possível processar a instrução fornecida";
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }
@@ -82,7 +82,7 @@ class ClienteController extends Controller
             $this->return = null;
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');
-            $this->message = "Não foi possível processa a instrução fornecida";
+            $this->message = "Não foi possível processar a instrução fornecida";
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }
@@ -101,7 +101,7 @@ class ClienteController extends Controller
             $this->return = null;
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');
-            $this->message = "Não foi possível processa a instrução fornecida";
+            $this->message = "Não foi possível processar a instrução fornecida";
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }
