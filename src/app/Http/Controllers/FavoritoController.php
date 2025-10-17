@@ -11,6 +11,8 @@ use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Domain\Favorito\Exceptions\ProdutoJaAdicionadoException;
 use App\Domain\Favorito\Exceptions\ProdutoNaoExisteCartelaClienteException;
+use App\Domain\Favorito\Exceptions\NaoPossuiProdutosException;
+
 class FavoritoController extends Controller
 {
     private $return;
@@ -65,7 +67,7 @@ class FavoritoController extends Controller
                 uuidCliente: $uuidCliente,
                 produtoId: $produtoId
             );
-            $this->return = !! $del($contexto);            
+            $this->return = !! $del($contexto);
             $this->message = "Favorito removido com sucesso";
             $this->code    = config('httpstatus.success.ok');
         } catch (ModelNotFoundException $e) {
@@ -101,6 +103,12 @@ class FavoritoController extends Controller
             $this->success = false;
             $this->code = config('httpstatus.client_error.bad_request');
             $this->message = $e->getMessage();
+        } catch (NaoPossuiProdutosException $e) {
+            $this->return = null;
+            $this->success = false;
+            $this->code = config('httpstatus.client_error.unprocessable_entity');
+            $this->message = $e->getMessage();
+            $this->success = false;
         } catch (\Exception $e) {
             $this->return = null;
             $this->success = false;

@@ -1,0 +1,582 @@
+{
+	"info": {
+		"_postman_id": "40cdc78e-3b15-42e6-86f2-119d70a5f813",
+		"name": "DESAFIO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36668714"
+	},
+	"item": [
+		{
+			"name": "CLIENTE",
+			"item": [
+				{
+					"name": "LIST ALL CLIENTE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/cliente/list-all",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"cliente",
+								"list-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENTE / {UUID}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/cliente/36646fa1-f915-404f-b8aa-9ebe5a61a479",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"cliente",
+								"36646fa1-f915-404f-b8aa-9ebe5a61a479"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENTE / {UUID}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/cliente/remove/6945aa87-c62f-4b3d-9b4b-cc31458df4b9",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"cliente",
+								"remove",
+								"6945aa87-c62f-4b3d-9b4b-cc31458df4b9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE CLIENTE / {UUID}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Usuário API Aiqfome 2\",\n    \"email\": \"usuariodesafioapiaiqfome2s025@aiqfome.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{desafio-base-url}}/api/cliente/update/17c0d104-6b2c-4535-a409-4bf102849a81",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"cliente",
+								"update",
+								"17c0d104-6b2c-4535-a409-4bf102849a81"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE CLIENTE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Usuário API Aiqfome\",\n    \"email\": \"usuariodesafioapiaiq2fomes@aiqfome.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{desafio-base-url}}/api/cliente/create",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"cliente",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FAVORITOS",
+			"item": [
+				{
+					"name": "ADD FAVORITO / {uuid}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"produto_id\": \"10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{desafio-base-url}}/api/favorito/add/e446ea05-c2cb-41be-824b-60c0f6b9bcbf",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"favorito",
+								"add",
+								"e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "REMOVE FAVORITO / {uuid}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/favorito/remove/e446ea05-c2cb-41be-824b-60c0f6b9bcbf/15",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"favorito",
+								"remove",
+								"e446ea05-c2cb-41be-824b-60c0f6b9bcbf",
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LISTA FAVORITO CLIENTE / {uuid}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/favorito/cliente/e458a663-8ff7-4ffe-bea1-4b4a162df1a4",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"favorito",
+								"cliente",
+								"e458a663-8ff7-4ffe-bea1-4b4a162df1a4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PRODUTOS",
+			"item": [
+				{
+					"name": "LIST ALL PRODUCTS",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/produto/list-all",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"produto",
+								"list-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRODUTO / {ID}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{desafio-token-acesso}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "{{desafio-x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{desafio-base-url}}/api/produto/21",
+							"host": [
+								"{{desafio-base-url}}"
+							],
+							"path": [
+								"api",
+								"produto",
+								"21"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EXTERNO",
+			"item": [
+				{
+					"name": "Get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://fakestoreapi.com/products",
+							"protocol": "https",
+							"host": [
+								"fakestoreapi",
+								"com"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://fakestoreapi.com/products/2",
+							"protocol": "https",
+							"host": [
+								"fakestoreapi",
+								"com"
+							],
+							"path": [
+								"products",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HEALTH",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{desafio-base-url}}/api/health",
+					"host": [
+						"{{desafio-base-url}}"
+					],
+					"path": [
+						"api",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AUTH",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"const response = pm.response.json();",
+							"pm.globals.set(\"desafio-token-acesso\", response.access_token); ",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-API-KEY",
+						"value": "{{desafio-x-api-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"aiqfomeapi@aiqfome.com.br\",\n    \"password\": \"4NkiFzUUwmhhbFYEggoZ\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{desafio-base-url}}/api/auth/token",
+					"host": [
+						"{{desafio-base-url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

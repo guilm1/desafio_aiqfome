@@ -35,8 +35,8 @@ class AuthApiUserRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
-            'status'  => config('httpsstatus.client_error.unprocessable_entity'),
+            'status'  => config('httpstatus.client_error.unprocessable_entity'),
             'errors'  => $validator->errors(),
-        ], config('httpsstatus.client_error.unprocessable_entity')));
+        ], config('httpstatus.client_error.unprocessable_entity')));
     }
 }

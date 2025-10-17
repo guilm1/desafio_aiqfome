@@ -1,0 +1,2557 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Documentação",
+        "description": "Documentação da API de favoritos do Aiqfome\n *      O aiqfome está expandindo seus canais de integração e precisa de uma API robusta para gerenciar os produtos favoritos de usuários na plataforma.\n *      Essa funcionalidade será usada por apps e interfaces web para armazenar e consultar produtos marcados como favoritos pelos clientes. A API terá alto volume de uso e integrará com outros sistemas internos e externos.\n *      Responsável: guilherme.argomes@gmail.com.",
+        "contact": {
+            "email": "guilherme.argomes@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Development"
+        }
+    ],
+    "paths": {
+        "/api/auth/token": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Gerar access token (login)",
+                "description": "Autentica o usuário por e-mail e senha e retorna um access token.",
+                "operationId": "authLogin",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Credenciais do usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "E-mail do usuário",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "aiqfomeapi@aiqfome.com.br"
+                                    },
+                                    "password": {
+                                        "description": "Senha do usuário",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "4NkiFzUUwmhhbFYEggoZ"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "success",
+                                        "access_token",
+                                        "token_type"
+                                    ],
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "access_token": {
+                                            "description": "Token de acesso (use no Authorization: Bearer ...)",
+                                            "type": "string",
+                                            "example": "1|tLjvaiXAmx5Gx0hzCBhmgpGsyAkHT9TYOfpBdPfQ2d2e1"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciais inválidas."
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "invalid_credentials": {
+                                        "summary": "Credenciais inválidas",
+                                        "value": {
+                                            "code": 401,
+                                            "success": false,
+                                            "message": "Credenciais inválidas."
+                                        }
+                                    },
+                                    "missing_or_invalid_api_key": {
+                                        "summary": "API Key inválida ou ausente",
+                                        "value": {
+                                            "code": 401,
+                                            "success": false,
+                                            "message": "API Key inválida ou ausente."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content (erros de validação)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "success",
+                                        "status",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 422
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O e-mail informado não é válido."
+                                                    }
+                                                },
+                                                "password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo senha é obrigatorio."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "email_invalido": {
+                                        "summary": "E-mail inválido",
+                                        "value": {
+                                            "success": false,
+                                            "status": 422,
+                                            "errors": {
+                                                "email": [
+                                                    "O e-mail informado não é válido."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "email_invalido_e_password_obrigatorio": {
+                                        "summary": "E-mail inválido e senha ausente",
+                                        "value": {
+                                            "success": false,
+                                            "status": 422,
+                                            "errors": {
+                                                "email": [
+                                                    "O e-mail informado não é válido."
+                                                ],
+                                                "password": [
+                                                    "O campo senha é obrigatorio."
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cliente/create": {
+            "post": {
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Criar cliente",
+                "description": "Cria um novo cliente a partir de nome e e-mail.",
+                "operationId": "clienteCreate",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Dados do cliente",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "description": "Nome completo do cliente",
+                                        "type": "string",
+                                        "example": "Usuário API Aiqfome"
+                                    },
+                                    "email": {
+                                        "description": "E-mail único do cliente",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuariodesafioapiaiqfome2025@aiqfome.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "required": [
+                                                "nome",
+                                                "email",
+                                                "uuid"
+                                            ],
+                                            "properties": {
+                                                "nome": {
+                                                    "type": "string",
+                                                    "example": "Usuário API Aiqfome"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "usuariodesafioapiaiqfomes@aiqfome.com"
+                                                },
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "17c0d104-6b2c-4535-a409-4bf102849a86"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente criado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciais inválidas."
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "invalid_credentials": {
+                                        "summary": "Credenciais inválidas",
+                                        "value": {
+                                            "code": 401,
+                                            "success": false,
+                                            "message": "Credenciais inválidas."
+                                        }
+                                    },
+                                    "missing_or_invalid_api_key": {
+                                        "summary": "API Key inválida ou ausente",
+                                        "value": {
+                                            "code": 401,
+                                            "success": false,
+                                            "message": "API Key inválida ou ausente."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content (erros de validação)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "success",
+                                        "code",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 422
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O email informado já está em uso."
+                                                    }
+                                                },
+                                                "nome": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo nome é obrigatório."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "email_em_uso": {
+                                        "summary": "E-mail já cadastrado",
+                                        "value": {
+                                            "success": false,
+                                            "code": 422,
+                                            "errors": {
+                                                "email": [
+                                                    "O email informado já está em uso."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "nome_obrigatorio_e_email_em_uso": {
+                                        "summary": "Nome ausente e e-mail em uso",
+                                        "value": {
+                                            "success": false,
+                                            "code": 422,
+                                            "errors": {
+                                                "nome": [
+                                                    "O campo nome é obrigatório."
+                                                ],
+                                                "email": [
+                                                    "O email informado já está em uso."
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cliente/{uuid}": {
+            "get": {
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Buscar cliente por UUID",
+                "description": "Retorna os dados do cliente pelo UUID.",
+                "operationId": "clienteFindByUuid",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "17c0d104-6b2c-4535-a409-4bf102849a86"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "required": [
+                                                "uuid",
+                                                "nome",
+                                                "email",
+                                                "created_at",
+                                                "updated_at"
+                                            ],
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "17c0d104-6b2c-4535-a409-4bf102849a86"
+                                                },
+                                                "nome": {
+                                                    "type": "string",
+                                                    "example": "Usuário API Aiqfome"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "usuariodesafioapiaiqfomes@aiqfome.com"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-17T18:09:44.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-17T18:09:44.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente encontrado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível processar a instrução fornecida"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cliente/list-all": {
+            "get": {
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Listar todos os clientes",
+                "description": "Retorna a lista completa de clientes.",
+                "operationId": "clienteListAll",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "nome",
+                                                    "email",
+                                                    "uuid"
+                                                ],
+                                                "properties": {
+                                                    "nome": {
+                                                        "type": "string",
+                                                        "example": "Usuário API Aiqfome"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "usuariodesafioapiaiqfome2025@aiqfome.com"
+                                                    },
+                                                    "uuid": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "9e8c95f2-a0dd-4369-9b1a-92f9c1d9b456"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Clientes encontrados com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Sem conteúdo (nenhum cliente encontrado)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cliente/remove/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Remover cliente",
+                "description": "Remove um cliente pelo UUID.",
+                "operationId": "clienteRemove",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "17c0d104-6b2c-4535-a409-4bf102849a86"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente removido com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível processar a instrução fornecida"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cliente/update/{uuid}": {
+            "put": {
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Atualizar cliente",
+                "description": "Atualiza os dados do cliente pelo UUID.",
+                "operationId": "clienteUpdate",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e0fed027-5f5d-423b-8c57-f66ba379fd5"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Campos permitidos para atualização",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Usuário API Aiqfome"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuariodesafioapiaiqfome2@aiqfome.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "required": [
+                                                "uuid",
+                                                "nome",
+                                                "email",
+                                                "created_at",
+                                                "updated_at"
+                                            ],
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "17c0d104-6b2c-4535-a409-4bf102849a86"
+                                                },
+                                                "nome": {
+                                                    "type": "string",
+                                                    "example": "Usuário API Aiqfome 2"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "usuariodesafioapiaiqfome2@aiqfome.com"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-17T18:09:44.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-17T18:33:35.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente atualizado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Não foi possível processar a instrução fornecida"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "success",
+                                                "code",
+                                                "errors"
+                                            ],
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 422
+                                                },
+                                                "errors": {
+                                                    "properties": {
+                                                        "email": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "O email informado já está em uso."
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorito/add/{uuid}": {
+            "post": {
+                "tags": [
+                    "Favorito"
+                ],
+                "summary": "Adicionar produto aos favoritos do cliente",
+                "description": "Adiciona um produto à lista de favoritos do cliente identificado por UUID.",
+                "operationId": "favoritoAdd",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Dados para adicionar favorito",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "produto_id"
+                                ],
+                                "oneOf": [
+                                    {
+                                        "properties": {
+                                            "produto_id": {
+                                                "description": "ID do produto (string ou número)",
+                                                "type": "string",
+                                                "example": "15"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    {
+                                        "properties": {
+                                            "produto_id": {
+                                                "description": "ID do produto (string ou número)",
+                                                "type": "integer",
+                                                "example": 15
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "required": [
+                                                "uuid_cliente",
+                                                "produto_id",
+                                                "title",
+                                                "image",
+                                                "price",
+                                                "review"
+                                            ],
+                                            "properties": {
+                                                "uuid_cliente": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+                                                },
+                                                "produto_id": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string",
+                                                            "example": "10"
+                                                        },
+                                                        {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    ]
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "uri",
+                                                    "example": "https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_t.png"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 109
+                                                },
+                                                "review": {
+                                                    "required": [
+                                                        "rate",
+                                                        "count"
+                                                    ],
+                                                    "properties": {
+                                                        "rate": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2.9
+                                                        },
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 470
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": ""
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Produto já está listado nos favoritos do cliente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Cliente não encontrado."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível processar a instrução fornecida"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorito/cliente/{uuid}": {
+            "get": {
+                "tags": [
+                    "Favorito"
+                ],
+                "summary": "Listar favoritos do cliente",
+                "description": "Retorna a lista de produtos favoritados por um cliente (UUID).",
+                "operationId": "favoritoListByClienteUuid",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "uuid_cliente",
+                                                    "produto_id",
+                                                    "title",
+                                                    "image",
+                                                    "price",
+                                                    "review"
+                                                ],
+                                                "properties": {
+                                                    "uuid_cliente": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+                                                    },
+                                                    "produto_id": {
+                                                        "type": "integer",
+                                                        "example": 13
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "uri",
+                                                        "example": "https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_t.png"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 599
+                                                    },
+                                                    "review": {
+                                                        "required": [
+                                                            "rate",
+                                                            "count"
+                                                        ],
+                                                        "properties": {
+                                                            "rate": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2.9
+                                                            },
+                                                            "count": {
+                                                                "type": "integer",
+                                                                "example": 250
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": ""
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente não encontrado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Cliente não possui favoritos."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Não foi possível processar a instrução fornecida"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorito/remove/{uuid}/{produto_id}": {
+            "delete": {
+                "tags": [
+                    "Favorito"
+                ],
+                "summary": "Remover produto dos favoritos do cliente",
+                "description": "Remove um produto da lista de favoritos do cliente identificado por UUID.",
+                "operationId": "favoritoRemove",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e446ea05-c2cb-41be-824b-60c0f6b9bcbf"
+                    },
+                    {
+                        "name": "produto_id",
+                        "in": "path",
+                        "description": "ID do produto a ser removido dos favoritos",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 15
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorito removido com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Produto não está listado entre os favoritos do cliente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "data",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Um serviço externo não conseguiu validar a existencia do produto."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não foi possível processar a instrução fornecida"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check da API",
+                "description": "Retorna se a API está operacional e o timestamp atual do servidor.",
+                "operationId": "healthCheck",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "up",
+                                        "time"
+                                    ],
+                                    "properties": {
+                                        "up": {
+                                            "description": "Indica se o serviço está funcional",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "time": {
+                                            "description": "Horário atual do servidor em ISO 8601",
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-10-17T17:46:52+00:00"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Serviço indisponível"
+                    }
+                }
+            }
+        },
+        "/api/produto/{produto_id}": {
+            "get": {
+                "tags": [
+                    "Produto"
+                ],
+                "summary": "Buscar produto por ID",
+                "description": "Retorna os dados de um produto dado seu ID.",
+                "operationId": "produtoGetById",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    },
+                    {
+                        "name": "produto_id",
+                        "in": "path",
+                        "description": "ID do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "required": [
+                                                "id",
+                                                "title",
+                                                "price",
+                                                "description",
+                                                "category",
+                                                "image",
+                                                "rating"
+                                            ],
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "DANVOUY Womens T Shirt Casual Cotton Short"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12.99
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "95%Cotton,5%Spandex, Features: Casual, Short Sleeve..."
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "women's clothing"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "uri",
+                                                    "example": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_t.png"
+                                                },
+                                                "rating": {
+                                                    "required": [
+                                                        "rate",
+                                                        "count"
+                                                    ],
+                                                    "properties": {
+                                                        "rate": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 3.6
+                                                        },
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 145
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Produto encontrado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Produto não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Houve um problema interno com a integração"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/produto/list-all": {
+            "get": {
+                "tags": [
+                    "Produto"
+                ],
+                "summary": "Listar todos os produtos",
+                "description": "Retorna a lista completa de produtos.",
+                "operationId": "produtoListAll",
+                "parameters": [
+                    {
+                        "name": "X-API-KEY",
+                        "in": "header",
+                        "description": "Chave da aplicação para acesso à API",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "36646fa1-f915-404f-b8aa-9ebe5a61a479"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "id",
+                                                    "title",
+                                                    "price",
+                                                    "description",
+                                                    "category",
+                                                    "image",
+                                                    "rating"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 109.95
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Your perfect pack for everyday use and walks in the forest..."
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "men's clothing"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "uri",
+                                                        "example": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png"
+                                                    },
+                                                    "rating": {
+                                                        "required": [
+                                                            "rate",
+                                                            "count"
+                                                        ],
+                                                        "properties": {
+                                                            "rate": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3.9
+                                                            },
+                                                            "count": {
+                                                                "type": "integer",
+                                                                "example": 120
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lista de produtos encontrada com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Credenciais inválidas."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "required": [
+                                                "code",
+                                                "success",
+                                                "message"
+                                            ],
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer",
+                                                    "example": 401
+                                                },
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "API Key inválida ou ausente."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data",
+                                        "success",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Houve um problema interno com a integração"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Autenticação por e-mail e senha"
+        },
+        {
+            "name": "Cliente",
+            "description": "Operações de clientes"
+        },
+        {
+            "name": "Health",
+            "description": "Endpoints de verificação de saúde da API"
+        },
+        {
+            "name": "Favorito",
+            "description": "Favorito"
+        },
+        {
+            "name": "Produto",
+            "description": "Produto"
+        }
+    ]
+}
