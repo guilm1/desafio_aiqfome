@@ -2,7 +2,7 @@
 
 namespace App\Domain\Cliente\UseCases;
 
-use App\Domain\Cliente\Contracts\ClienteServiceInterface;
+use App\Domain\Cliente\Services\Contracts\ClienteServiceInterface;
 use App\Models\Cliente;
 
 class CreateCliente

@@ -6,7 +6,7 @@ use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Domain\Cliente\Contracts\ClienteServiceInterface;
+use App\Domain\Cliente\Services\Contracts\ClienteServiceInterface;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
 
 class ClienteService implements ClienteServiceInterface
@@ -35,19 +35,6 @@ class ClienteService implements ClienteServiceInterface
         }
 
         $cliente->fill($data);
-        $cliente->save();
-
-        return $cliente;
-    }
-
-    public function changeEmail(string $uuid, string $newEmail): Cliente
-    {
-        $cliente = $this->clientes->findByUuid($uuid);
-        if (!$cliente) {
-            throw new ModelNotFoundException('Cliente não encontrado.');
-        }
-
-        $cliente->email = $newEmail;
         $cliente->save();
 
         return $cliente;
