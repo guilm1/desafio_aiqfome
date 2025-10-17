@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Domain\Cliente\UseCases\CreateCliente;
-use App\Domain\Cliente\UseCases\UpdateCliente;
-use App\Domain\Cliente\UseCases\ListAllCliente;
-use App\Domain\Cliente\UseCases\FindByUuidCliente;
-use App\Domain\Cliente\UseCases\RemoveCliente;
+use App\Http\Requests\Favorito\AddFavoritoRequest;
+use App\Domain\Favorito\UseCases\AddFavorito;
+use App\Domain\Favorito\UseCases\RemoveFavorito;
+use App\Domain\Favorito\UseCases\FindFavoritosByUuidCliente;
+use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Cliente\CreateClienteRequest;
-use App\Http\Requests\Cliente\UpdateClienteRequest;
 
-class ClienteController extends Controller
+class FavoritoController extends Controller
 {
     private $return;
     private $code;
@@ -30,23 +28,15 @@ class ClienteController extends Controller
         $this->success = true;
     }
 
-    public function listAll(ListAllCliente $listAll)
-    {
-        $this->return = $listAll();
-        $this->message = 'Clientes encontrados com sucesso';
-        if (count($this->return) === 0) {
-            $this->message = 'Nenhum cliente encontrado';
-            $this->success = false;
-            $this->code = config('httpstatus.success.no_content');
-        }
-        return collection($this->return, $this->code, $this->message, $this->success);
-    }
-
-    public function findByUuid(FindByUuidCliente $findByUuid, string $uuid)
+    public function addFavorito(AddFavoritoRequest $request, string $uuidCliente, AddFavorito $add)
     {
         try {
-            $this->return = $findByUuid($uuid);
-            $this->message = 'Cliente encontrado com sucesso';
+            $contexto = new FavoritoContext(
+                uuidCliente: $uuidCliente,
+                produtoId: $request->validated('produto_id'),
+                request: $request
+            );
+            $this->return = $add($contexto)?->retorno;
         } catch (ModelNotFoundException $e) {
             $this->return = null;
             $this->success = false;
@@ -58,21 +48,19 @@ class ClienteController extends Controller
             $this->code = config('httpstatus.client_error.unprocessable_entity');
             $this->message = "Não foi possível processa a instrução fornecida";
         }
+
         return collection($this->return, $this->code, $this->message, $this->success);
     }
 
-    public function create(CreateClienteRequest $request, CreateCliente $create)
-    {
-        $this->return = $create($request->validated());
-        $this->message = 'Cliente criado com sucesso';
-        return collection($this->return, $this->code, $this->message);
-    }
-
-    public function update(UpdateClienteRequest $request, UpdateCliente $update, string $uuid)
+    public function remove(string $uuidCliente, int $produtoId, RemoveFavorito $del)
     {
         try {
-            $this->return = $update($uuid, $request->validated());
-            $this->message = 'Cliente atualizado com sucesso';
+            $contexto = new FavoritoContext(
+                uuidCliente: $uuidCliente,
+                produtoId: $produtoId
+            );
+            $this->return = $del($contexto);
+            return collection($this->return, $this->code, $this->message, $this->success);
         } catch (ModelNotFoundException $e) {
             $this->return = null;
             $this->success = false;
@@ -83,15 +71,19 @@ class ClienteController extends Controller
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');
             $this->message = "Não foi possível processa a instrução fornecida";
+            $this->success = false;
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }
 
-    public function remove(RemoveCliente $removeCliente, string $uuid)
+    public function findByUuid(string $uuidCliente, FindFavoritosByUuidCliente $findFavoritosByUuidUsuario)
     {
         try {
-            $this->return = $removeCliente($uuid);
-            $this->message = 'Cliente removido com sucesso';
+            $contexto = new FavoritoContext(
+                uuidCliente: $uuidCliente,
+                produtoId: null
+            );
+            $this->return = $findFavoritosByUuidUsuario($contexto);
         } catch (ModelNotFoundException $e) {
             $this->return = null;
             $this->success = false;
@@ -102,6 +94,7 @@ class ClienteController extends Controller
             $this->success = false;
             $this->code = config('httpstatus.client_error.unprocessable_entity');
             $this->message = "Não foi possível processa a instrução fornecida";
+            $this->success = false;
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }

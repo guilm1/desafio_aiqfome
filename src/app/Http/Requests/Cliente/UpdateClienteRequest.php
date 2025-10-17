@@ -47,6 +47,6 @@ class UpdateClienteRequest extends FormRequest
             'success' => false,
             'code'  => config('httpstatus.client_error.unprocessable_entity'),
             'errors'  => $validator->errors(),
-        ], 422));
+        ], config('httpsstatus.client_error.unprocessable_entity')));
     }
 }

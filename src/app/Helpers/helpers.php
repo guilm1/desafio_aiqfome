@@ -20,3 +20,39 @@ if (! function_exists('collection')) {
         return $preserveFraction ? response()->json($collection, $code, [], JSON_PRESERVE_ZERO_FRACTION) : response()->json($collection, $code);
     }
 }
+
+if (!function_exists('getCamposIntegracao')) {
+    function getCamposIntegracao(string $sigla): ?array
+    {
+        $sistema = \App\Models\IntegracaoServicos::where('sigla', $sigla)->first();
+        if (!$sistema) {
+            return null;
+        }
+
+        $integracao = $sistema->camposIntegracao()->get();
+        if (!$integracao) {
+            return null;
+        }
+
+        $arrayIntegracao = [];
+        foreach ($integracao as $item) {
+            $arrayIntegracao[$item->sigla] = $item->valor;
+        }
+
+        return $arrayIntegracao;
+    }
+}
+
+if (!function_exists('getProduto')) {
+    function getProdutoFavorito(\App\Domain\Favorito\UseCases\Context\FavoritoContext $contexto): object
+    {
+        return (object) [
+            "uuid_cliente" => $contexto->uuidCliente,
+            "produto_id" => $contexto->produtoId,
+            "title" => $contexto->produto->title,
+            "image" => $contexto->produto->image,
+            "price" => $contexto->produto->price,
+            "review" => $contexto->produto->rating
+        ];
+    }
+}
