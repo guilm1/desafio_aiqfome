@@ -5,6 +5,7 @@ namespace App\Domain\Favorito\UseCases\Handlers;
 use App\Domain\Favorito\UseCases\Context\FavoritoContext;
 use App\Domain\Favorito\UseCases\Handlers\BaseHandler;
 use App\Repositories\FavoritoRepository;
+use App\Domain\Favorito\Exceptions\NaoPossuiProdutosException;
 
 class ListaFavoritosByClienteHandler extends BaseHandler
 {
@@ -15,7 +16,7 @@ class ListaFavoritosByClienteHandler extends BaseHandler
         $listaFavoritos = $this->favoritos->getAllByIdCliente($contexto->cliente->id);
 
         if (count($listaFavoritos) == 0) {
-            throw new \Exception('Cliente não possui favoritos.');
+            throw new NaoPossuiProdutosException('Cliente não possui favoritos.');
         }
 
         $contexto->listaFavoritos = $listaFavoritos;

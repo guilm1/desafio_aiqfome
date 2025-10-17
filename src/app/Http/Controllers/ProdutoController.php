@@ -37,8 +37,8 @@ class ProdutoController extends Controller
         } catch (\Exception $e) {
             $this->return = null;
             $this->success = false;
-            $this->code = config('httpstatus.client_error.bad_request');
-            $this->message = $e->getMessage();
+            $this->code = config('httpstatus.server_error.internal_server_error');
+            $this->message = "Houve um problema interno com a integração";
         }
         return collection($this->return, $this->code, $this->message, $this->success);
     }
